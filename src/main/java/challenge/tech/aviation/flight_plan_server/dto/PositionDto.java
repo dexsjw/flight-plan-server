@@ -5,14 +5,11 @@ import lombok.*;
 
 @Getter
 @Setter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FlightPlanDto {
+public class PositionDto {
 
-    private String _id;
-    private String aircraftIdentification;
-    private FiledRouteDto filedRoute;
+    private String designatedPoint;
 
 }

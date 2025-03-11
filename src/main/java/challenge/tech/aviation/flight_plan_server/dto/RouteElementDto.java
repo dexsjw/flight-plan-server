@@ -9,10 +9,10 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class FlightPlanDto {
+public class RouteElementDto {
 
-    private String _id;
-    private String aircraftIdentification;
-    private FiledRouteDto filedRoute;
+    private PositionDto position;
+    private int seqNum;
+    private String airway;
 
 }
