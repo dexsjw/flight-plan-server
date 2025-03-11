@@ -1,4 +1,4 @@
-package challenge.tech.aviation.flight_plan_server.configs;
+package challenge.tech.aviation.flight_plan_server.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;

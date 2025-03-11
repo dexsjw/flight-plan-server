@@ -1,6 +1,6 @@
-package challenge.tech.aviation.flight_plan_server.services.impl;
+package challenge.tech.aviation.flight_plan_server.service.impl;
 
-import challenge.tech.aviation.flight_plan_server.services.FlightPlanService;
+import challenge.tech.aviation.flight_plan_server.service.FlightPlanService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;

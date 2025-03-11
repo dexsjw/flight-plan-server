@@ -1,6 +1,6 @@
-package challenge.tech.aviation.flight_plan_server.controllers;
+package challenge.tech.aviation.flight_plan_server.controller;
 
-import challenge.tech.aviation.flight_plan_server.services.FlightPlanService;
+import challenge.tech.aviation.flight_plan_server.service.FlightPlanService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;

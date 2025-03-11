@@ -1,4 +1,4 @@
-package challenge.tech.aviation.flight_plan_server.services;
+package challenge.tech.aviation.flight_plan_server.service;
 
 import org.springframework.http.ResponseEntity;
 
