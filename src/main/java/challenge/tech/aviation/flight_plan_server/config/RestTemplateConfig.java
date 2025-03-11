@@ -11,14 +11,17 @@ import java.time.Duration;
 @Configuration
 public class RestTemplateConfig {
 
-    @Value("${external.flight.data.apikey}")
-    private String apikey;
+    @Value("${external.flight.data.apikey.value}")
+    private String apikeyValue;
+
+    @Value("${external.flight.data.apikey.key}")
+    private String apikeyKey;
 
     @Bean
     public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
         return restTemplateBuilder.connectTimeout(Duration.ofMillis(5000))
                 .readTimeout(Duration.ofMillis(5000))
-                .defaultHeader("apikey", apikey)
+                .defaultHeader(apikeyKey, apikeyValue)
                 .build();
     }
 }
