@@ -18,7 +18,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
     @Value("${external.flight.data.path.flight-manager.display-all}")
     private String flightManagerPathDisplayAll;
 
-    private final RestTemplate restTemplate;
+    private RestTemplate restTemplate;
 
     private WebClient flightManagerWebClient;
 
@@ -29,13 +29,13 @@ public class FlightPlanServiceImpl implements FlightPlanService {
 
     @Override
     public ResponseEntity<String> testEndpoint() {
-        return restTemplate.getForEntity(flightManagerUrl + flightManagerPathDisplayAll, String.class);
-//        return flightManagerWebClient.get()
-//                .uri(flightManagerPathDisplayAll)
-//                .retrieve()
-//                .toEntity(String.class)
-//                .timeout(Duration.ofMillis(10000))
-//                .block();
+//        return restTemplate.getForEntity(flightManagerUrl + flightManagerPathDisplayAll, String.class);
+        return flightManagerWebClient.get()
+                .uri(flightManagerPathDisplayAll)
+                .retrieve()
+                .toEntity(String.class)
+                .timeout(Duration.ofMillis(10000))
+                .block();
     }
 
 }
