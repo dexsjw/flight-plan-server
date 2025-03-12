@@ -1,17 +1,25 @@
 package challenge.tech.aviation.flight_plan_server.service.impl;
 
+import challenge.tech.aviation.flight_plan_server.constants.EAeronauticalDataType;
 import challenge.tech.aviation.flight_plan_server.dto.FlightPlanDto;
+import challenge.tech.aviation.flight_plan_server.dto.FlightPlanRouteDataDto;
+import challenge.tech.aviation.flight_plan_server.dto.RouteElementDto;
 import challenge.tech.aviation.flight_plan_server.service.FlightPlanService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Slf4j
 @Service
 public class FlightPlanServiceImpl implements FlightPlanService {
 
@@ -24,9 +32,11 @@ public class FlightPlanServiceImpl implements FlightPlanService {
 //    private RestTemplate restTemplate;
 
     private WebClient flightManagerWebClient;
+    private WebClient aeronauticalDataWebClient;
 
-    public FlightPlanServiceImpl(RestTemplate restTemplate, WebClient flightManagerWebClient) {
+    public FlightPlanServiceImpl(RestTemplate restTemplate, WebClient flightManagerWebClient, WebClient aeronauticalDataWebClient) {
         this.flightManagerWebClient = flightManagerWebClient;
+        this.aeronauticalDataWebClient = aeronauticalDataWebClient;
 //        this.restTemplate = restTemplate;
     }
 
@@ -49,6 +59,89 @@ public class FlightPlanServiceImpl implements FlightPlanService {
                 .bodyToMono(new ParameterizedTypeReference<List<FlightPlanDto>>() {})
                 .timeout(Duration.ofMillis(10000))
                 .block();
+                // TODO: error handling (NotFoundException)
+    }
+
+    @Override
+    public FlightPlanRouteDataDto searchFlightPlanRouteData(String id) {
+        List<FlightPlanRouteDataDto> flightPlanRouteDataList = flightManagerWebClient.get()
+                .uri(flightManagerPathDisplayAll)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<FlightPlanRouteDataDto>>() {})
+                .timeout(Duration.ofMillis(10000))
+                .block();
+                // TODO: error handling (NotFoundException)
+        if (flightPlanRouteDataList == null) {
+            return new FlightPlanRouteDataDto();
+        }
+        return flightPlanRouteDataList.stream()
+                .filter(flightPlanRouteData -> flightPlanRouteData.get_id().equals(id))
+                .findAny()
+                .map(this::populatePositionPointCoordinates)
+                .orElseGet(FlightPlanRouteDataDto::new);
+                // TODO: error handling (NoFlightPlanRouteDataException)
+    }
+
+    private FlightPlanRouteDataDto populatePositionPointCoordinates(FlightPlanRouteDataDto flightPlanRouteData) {
+        // In case routeElement list is not sorted by "seqNo"
+        List<RouteElementDto> sortedRouteElement = new ArrayList<>();
+
+        if (flightPlanRouteData.getFiledRoute() != null && flightPlanRouteData.getFiledRoute().getRouteElement() != null) {
+            List<RouteElementDto> routeElementList = flightPlanRouteData.getFiledRoute().getRouteElement();
+
+            for (RouteElementDto routeElement : routeElementList) {
+                String designatedPoint = routeElement.getPosition() != null && routeElement.getPosition().getDesignatedPoint() != null
+                        ? routeElement.getPosition().getDesignatedPoint()
+                        : "";
+
+                String pointCoordinate = "";
+                if (isAeronauticalDataTypeAndTermExist(EAeronauticalDataType.FIXES, designatedPoint)) {
+                    List<String> pointCoordinateList = searchAeronauticalDataTypeAndTerm(EAeronauticalDataType.FIXES, designatedPoint);
+
+                    pointCoordinate = pointCoordinateList != null
+                            ? pointCoordinateList.get(0)
+                            : "";
+                }
+
+                if (routeElement.getPosition() != null) {
+                    routeElement.getPosition().setPointCoordinate(pointCoordinate);
+                }
+
+                int seqNum = Optional.ofNullable(routeElement.getSeqNum())
+                        .orElse(0);
+                        // TODO: error handling (NoRouteElementSeqNumException)
+
+                sortedRouteElement.add(seqNum, routeElement);
+            }
+        }
+
+        if (flightPlanRouteData.getFiledRoute() != null) {
+            flightPlanRouteData.getFiledRoute().setRouteElement(sortedRouteElement);
+        }
+        return flightPlanRouteData;
+    }
+
+    private boolean isAeronauticalDataTypeAndTermExist(EAeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
+        return Boolean.parseBoolean(aeronauticalDataWebClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/exist/{type}/{term}")
+                        .build(aeronauticalDataType.getType(), aeronauticalDataTerm))
+                .accept(MediaType.TEXT_PLAIN)
+                .retrieve()
+                .bodyToMono(String.class)
+                .timeout(Duration.ofMillis(10000))
+                .block());
+                // TODO: error handling
+    }
+
+    private List<String> searchAeronauticalDataTypeAndTerm(EAeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
+        return aeronauticalDataWebClient.get()
+                .uri(uriBuilder -> uriBuilder.path("/search/{type}/{term}")
+                        .build(aeronauticalDataType.getType(), aeronauticalDataTerm))
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+                .timeout(Duration.ofMillis(10000))
+                .block();
+                // TODO: error handling (NotFoundException)
     }
 
 }

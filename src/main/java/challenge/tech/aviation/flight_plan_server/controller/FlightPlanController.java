@@ -1,10 +1,12 @@
 package challenge.tech.aviation.flight_plan_server.controller;
 
 import challenge.tech.aviation.flight_plan_server.dto.FlightPlanDto;
+import challenge.tech.aviation.flight_plan_server.dto.FlightPlanRouteDataDto;
 import challenge.tech.aviation.flight_plan_server.service.FlightPlanService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +31,11 @@ public class FlightPlanController {
     @GetMapping("/displayAll")
     public ResponseEntity<List<FlightPlanDto>> displayAllFlightPlans() {
         return ResponseEntity.status(HttpStatus.OK).body(flightPlanService.displayAllFlightPlans());
+    }
+
+    @GetMapping("/search/route/{id}")
+    public ResponseEntity<FlightPlanRouteDataDto> searchFlightPlanRouteData(@PathVariable String id) {
+        return ResponseEntity.status(HttpStatus.OK).body(flightPlanService.searchFlightPlanRouteData(id));
     }
 
 }
