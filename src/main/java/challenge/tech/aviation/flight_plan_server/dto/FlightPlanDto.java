@@ -13,6 +13,5 @@ public class FlightPlanDto {
 
     private String _id;
     private String aircraftIdentification;
-    private FiledRouteDto filedRoute;
 
 }
