@@ -137,6 +137,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
         return aeronauticalDataWebClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/search/{type}/{term}")
                         .build(aeronauticalDataType.getType(), aeronauticalDataTerm))
+                .accept(MediaType.TEXT_PLAIN)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
                 .timeout(Duration.ofMillis(10000))
