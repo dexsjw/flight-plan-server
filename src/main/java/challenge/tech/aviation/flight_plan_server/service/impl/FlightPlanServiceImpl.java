@@ -5,6 +5,10 @@ import challenge.tech.aviation.flight_plan_server.dto.FlightPlanDto;
 import challenge.tech.aviation.flight_plan_server.dto.FlightPlanRouteDataDto;
 import challenge.tech.aviation.flight_plan_server.dto.RouteElementDto;
 import challenge.tech.aviation.flight_plan_server.service.FlightPlanService;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -33,10 +37,12 @@ public class FlightPlanServiceImpl implements FlightPlanService {
 
     private WebClient flightManagerWebClient;
     private WebClient aeronauticalDataWebClient;
+    private ObjectMapper objectMapper;
 
-    public FlightPlanServiceImpl(RestTemplate restTemplate, WebClient flightManagerWebClient, WebClient aeronauticalDataWebClient) {
+    public FlightPlanServiceImpl(WebClient flightManagerWebClient, WebClient aeronauticalDataWebClient, ObjectMapper objectMapper) {
         this.flightManagerWebClient = flightManagerWebClient;
         this.aeronauticalDataWebClient = aeronauticalDataWebClient;
+        this.objectMapper = objectMapper;
 //        this.restTemplate = restTemplate;
     }
 
@@ -134,15 +140,23 @@ public class FlightPlanServiceImpl implements FlightPlanService {
     }
 
     private List<String> searchAeronauticalDataTypeAndTerm(EAeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
-        return aeronauticalDataWebClient.get()
+        String dataJsonStr = aeronauticalDataWebClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/search/{type}/{term}")
                         .build(aeronauticalDataType.getType(), aeronauticalDataTerm))
                 .accept(MediaType.TEXT_PLAIN)
                 .retrieve()
-                .bodyToMono(new ParameterizedTypeReference<List<String>>() {})
+                .bodyToMono(String.class)
                 .timeout(Duration.ofMillis(10000))
                 .block();
                 // TODO: error handling (NotFoundException)
+
+        List<String> data = new ArrayList<>();
+        try {
+            data = objectMapper.readValue(dataJsonStr, new TypeReference<List<String>>() {});
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return data;
     }
 
 }
