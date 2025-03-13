@@ -1,13 +1,12 @@
 package challenge.tech.aviation.flight_plan_server.service.impl;
 
-import challenge.tech.aviation.flight_plan_server.constants.EAeronauticalDataType;
+import challenge.tech.aviation.flight_plan_server.constants.AeronauticalDataType;
 import challenge.tech.aviation.flight_plan_server.dto.FlightPlanDto;
 import challenge.tech.aviation.flight_plan_server.dto.FlightPlanRouteDataDto;
 import challenge.tech.aviation.flight_plan_server.dto.RouteElementDto;
 import challenge.tech.aviation.flight_plan_server.service.FlightPlanService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -15,7 +14,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import java.time.Duration;
@@ -101,8 +99,8 @@ public class FlightPlanServiceImpl implements FlightPlanService {
                         : "";
 
                 String pointCoordinate = "";
-                if (isAeronauticalDataTypeAndTermExist(EAeronauticalDataType.FIXES, designatedPoint)) {
-                    List<String> pointCoordinateList = searchAeronauticalDataTypeAndTerm(EAeronauticalDataType.FIXES, designatedPoint);
+                if (isAeronauticalDataTypeAndTermExist(AeronauticalDataType.FIXES, designatedPoint)) {
+                    List<String> pointCoordinateList = searchAeronauticalDataTypeAndTerm(AeronauticalDataType.FIXES, designatedPoint);
 
                     pointCoordinate = pointCoordinateList != null
                             ? pointCoordinateList.get(0)
@@ -127,7 +125,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
         return flightPlanRouteData;
     }
 
-    private boolean isAeronauticalDataTypeAndTermExist(EAeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
+    private boolean isAeronauticalDataTypeAndTermExist(AeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
         return Boolean.parseBoolean(aeronauticalDataWebClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/exist/{type}/{term}")
                         .build(aeronauticalDataType.getType(), aeronauticalDataTerm))
@@ -139,7 +137,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
                 // TODO: error handling
     }
 
-    private List<String> searchAeronauticalDataTypeAndTerm(EAeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
+    private List<String> searchAeronauticalDataTypeAndTerm(AeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
         String dataJsonStr = aeronauticalDataWebClient.get()
                 .uri(uriBuilder -> uriBuilder.path("/search/{type}/{term}")
                         .build(aeronauticalDataType.getType(), aeronauticalDataTerm))

@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public enum EAeronauticalDataType {
+public enum AeronauticalDataType {
     AIRPORTS("airports"), AIRWAYS("airways"), FIXES("fixes"), NAVAIDS("navaids"), RUNWAYS("runways");
 
     private final String type;
