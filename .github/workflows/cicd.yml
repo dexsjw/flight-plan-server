@@ -53,7 +53,7 @@ jobs:
           
           # Log in to Heroku container registry
           docker login --username=${{ vars.DOCKERHUB_USERNAME }} --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
-          # heroku container:login
+          heroku container:login
           
           # Pull image from Docker Hub
           docker pull dexsjw/flight-plan-server:latest
