@@ -11,7 +11,7 @@ import java.time.Duration;
 
 @Configuration
 public class FlightDataRestClientConfig {
-    
+
     @Value("${external.flight.data.apikey.value}")
     private String apikeyValue;
 
