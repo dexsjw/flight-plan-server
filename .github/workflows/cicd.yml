@@ -34,7 +34,6 @@ jobs:
             "apikey_value=${{ secrets.APIKEY_VALUE }}"
 
   heroku-deploy:
-    needs: docker-build-push
     runs-on: ubuntu-latest
     steps:
       - name: Checkout to github runner
