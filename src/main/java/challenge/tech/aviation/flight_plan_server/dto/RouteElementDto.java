@@ -14,5 +14,6 @@ public class RouteElementDto {
     private PositionDto position;
     private int seqNum;
     private String airway;
+    private String pointCoordinate;
 
 }
