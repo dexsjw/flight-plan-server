@@ -25,7 +25,7 @@ public class FlightDataRestClientConfig {
     private String aeronauticalDataUrl;
 
     @Bean
-    private ClientHttpRequestFactory clientHttpRequestFactory() {
+    public ClientHttpRequestFactory clientHttpRequestFactory() {
         HttpComponentsClientHttpRequestFactory clientHttpRequestFactory = new HttpComponentsClientHttpRequestFactory();
         clientHttpRequestFactory.setConnectTimeout(Duration.ofMillis(5000));
         clientHttpRequestFactory.setReadTimeout(Duration.ofMillis(5000));
