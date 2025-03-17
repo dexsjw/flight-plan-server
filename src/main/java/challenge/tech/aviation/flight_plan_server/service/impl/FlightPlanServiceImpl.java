@@ -25,13 +25,8 @@ import java.util.Optional;
 @Service
 public class FlightPlanServiceImpl implements FlightPlanService {
 
-//    @Value("${external.flight.data.url.flight-manager}")
-////    private String flightManagerUrl;
-
     @Value("${external.flight.data.path.flight-manager.display-all}")
-    private String flightManagerPathDisplayAll;
-
-//    private RestTemplate restTemplate;
+    private String flightManagerDisplayAllPath;
 
     private WebClient flightManagerWebClient;
     private WebClient aeronauticalDataWebClient;
@@ -41,13 +36,12 @@ public class FlightPlanServiceImpl implements FlightPlanService {
         this.flightManagerWebClient = flightManagerWebClient;
         this.aeronauticalDataWebClient = aeronauticalDataWebClient;
         this.objectMapper = objectMapper;
-//        this.restTemplate = restTemplate;
     }
 
     @Override
     public List<FlightPlanDto> displayAllFlightPlans() {
         return flightManagerWebClient.get()
-                .uri(flightManagerPathDisplayAll)
+                .uri(flightManagerDisplayAllPath)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<FlightPlanDto>>() {})
                 .timeout(Duration.ofMillis(10000))
@@ -59,7 +53,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
     public FlightPlanRouteDataDto searchFlightPlanRouteData(String id) {
         log.info("FlightPlanId: " + id);
         List<FlightPlanRouteDataDto> flightPlanRouteDataList = flightManagerWebClient.get()
-                .uri(flightManagerPathDisplayAll)
+                .uri(flightManagerDisplayAllPath)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<FlightPlanRouteDataDto>>() {})
                 .timeout(Duration.ofMillis(10000))
