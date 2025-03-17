@@ -28,6 +28,9 @@ public class FlightPlanServiceImpl implements FlightPlanService {
     @Value("${external.flight.data.path.flight-manager.display-all}")
     private String flightManagerDisplayAllPath;
 
+    @Value("${external.flight.data.path.aeronautical-data.search}")
+    private String aeronauticalDataSearchPath;
+
     private WebClient flightManagerWebClient;
     private WebClient aeronauticalDataWebClient;
     private ObjectMapper objectMapper;
@@ -121,7 +124,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
 
     private List<String> searchAeronauticalDataTypeAndTerm(AeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
         String dataJsonStr = aeronauticalDataWebClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/search/{type}/{term}")
+                .uri(uriBuilder -> uriBuilder.path(aeronauticalDataSearchPath + "/{type}/{term}")
                         .build(aeronauticalDataType.getType(), aeronauticalDataTerm))
                 .accept(MediaType.TEXT_PLAIN)
                 .retrieve()
