@@ -40,32 +40,40 @@ jobs:
       - name: Install Heroku CLI
         run: curl https://cli-assets.heroku.com/install.sh | sh
 
-      # Log in to Heroku using the HEROKU_API_KEY environment variable
-      - name: Login to Heroku
-        run: heroku auth:token
-        env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+      - name: Deploy to Heroku
+        uses: akhileshns/heroku-deploy@v3
+        with:
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "flight-plan-server"
+          heroku_email: ${{ vars.HEROKU_EMAIL }}
 
-      - name: Deploy Docker image to Heroku
-        run: |
-          # Refer to https://devcenter.heroku.com/articles/container-registry-and-runtime
-          # for more information
-          
-          # Log in to Heroku container registry
-          docker login --username=${{ vars.DOCKERHUB_USERNAME }} --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
-          heroku container:login
-          
-          # Pull image from Docker Hub
-          docker pull dexsjw/flight-plan-server:latest
-          
-          # Tag the Docker image
-          docker tag dexsjw/flight-plan-server:latest registry.heroku.com/flight-plan-server/web
-          
-          # Push to Heroku's container registry
-          docker push registry.heroku.com/flight-plan-server/web
-          
-          # Let Heroku build image from Dockerfile and push to Container Registry
-          # heroku container:push web
-          
-          # Release the image on Heroku
-          heroku container:release web --app flight-plan-server
+# Manual deployment to Heroku
+#      # Log in to Heroku using the HEROKU_API_KEY environment variable
+#      - name: Login to Heroku
+#        run: heroku auth:token
+#        env:
+
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+#      - name: Deploy Docker image to Heroku
+#        run: |
+#          # Refer to https://devcenter.heroku.com/articles/container-registry-and-runtime
+#          # for more information
+#
+#          # Log in to Heroku container registry
+#          # docker login --username=${{ vars.DOCKERHUB_USERNAME }} --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
+#          # heroku container:login
+#
+#          # Pull image from Docker Hub
+#          # docker pull dexsjw/flight-plan-server:latest
+#
+#          # Tag the Docker image
+#          #docker tag dexsjw/flight-plan-server:latest registry.heroku.com/flight-plan-server/web
+#
+#          # Push to Heroku's container registry
+#          # docker push registry.heroku.com/flight-plan-server/web
+#
+#          # Let Heroku build image from Dockerfile and push to Container Registry
+#          # heroku container:push web
+#
+#          # Release the image on Heroku
+#          # heroku container:release web --app flight-plan-server
