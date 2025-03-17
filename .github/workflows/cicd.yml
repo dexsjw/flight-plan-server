@@ -49,9 +49,16 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "flight-plan-server"
           heroku_email: ${{ vars.HEROKU_EMAIL }}
+          usedocker: true
+          docker_build_args: |
+            apikey_key
+            apikey_value
         env:
-          HD_APIKEY_KEY: ${{ secrets.APIKEY_KEY }}
-          HD_APIKEY_VALUE: ${{ secrets.APIKEY_VALUE }}
+          apikey_key: ${{ secrets.APIKEY_KEY }}
+          apikey_value: ${{ secrets.APIKEY_VALUE }}
+          # For using Heroku's Config Vars
+#          HD_APIKEY_KEY: ${{ secrets.APIKEY_KEY }}
+#          HD_APIKEY_VALUE: ${{ secrets.APIKEY_VALUE }}
 
 # Manual deployment to Heroku (not working)
 #      # Log in to Heroku using the HEROKU_API_KEY environment variable
