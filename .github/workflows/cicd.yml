@@ -29,3 +29,13 @@ jobs:
         with:
           push: true
           tags: dexsjw/flight-plan-server:latest
+
+  heroku-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Heroku
+        uses: behe/heroku-build@v1
+        with:
+          app-name: "flight-plan-server"
+          api-key: ${{ secrets.HEROKU_API_KEY }}
