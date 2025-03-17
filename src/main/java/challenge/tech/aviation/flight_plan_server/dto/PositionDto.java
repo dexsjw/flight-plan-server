@@ -13,6 +13,5 @@ import java.util.List;
 public class PositionDto {
 
     private String designatedPoint;
-    private String pointCoordinate;
 
 }

@@ -68,6 +68,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
 
     @Override
     public FlightPlanRouteDataDto searchFlightPlanRouteData(String id) {
+        log.info("FlightPlanId: " + id);
         List<FlightPlanRouteDataDto> flightPlanRouteDataList = flightManagerWebClient.get()
                 .uri(flightManagerPathDisplayAll)
                 .retrieve()
@@ -96,7 +97,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
             for (RouteElementDto routeElement : routeElementList) {
                 String designatedPoint = routeElement.getPosition() != null && routeElement.getPosition().getDesignatedPoint() != null
                         ? routeElement.getPosition().getDesignatedPoint()
-                        : "";
+                        : " ";
 
                 String pointCoordinate = "";
                 if (isAeronauticalDataTypeAndTermExist(AeronauticalDataType.FIXES, designatedPoint)) {
@@ -107,9 +108,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
                             : "";
                 }
 
-                if (routeElement.getPosition() != null) {
-                    routeElement.getPosition().setPointCoordinate(pointCoordinate);
-                }
+                routeElement.setPointCoordinate(pointCoordinate);
 
                 int seqNum = Optional.ofNullable(routeElement.getSeqNum())
                         .orElse(0);
