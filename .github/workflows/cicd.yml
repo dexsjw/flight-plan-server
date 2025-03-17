@@ -48,25 +48,24 @@ jobs:
 
       - name: Deploy Docker image to Heroku
         run: |
-          heroku container:login
           # Refer to https://devcenter.heroku.com/articles/container-registry-and-runtime
           # for more information
           
           # Log in to Heroku container registry
-          # docker login --username=${{ vars.DOCKERHUB_USERNAME }} --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
+          docker login --username=${{ vars.DOCKERHUB_USERNAME }} --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
           # heroku container:login
           
           # Pull image from Docker Hub
-          # docker pull dexsjw/flight-plan-server:latest
+          docker pull dexsjw/flight-plan-server:latest
           
           # Tag the Docker image
-          # docker tag dexsjw/flight-plan-server:latest registry.heroku.com/flight-plan-server/web
+          docker tag dexsjw/flight-plan-server:latest registry.heroku.com/flight-plan-server/web
           
           # Push to Heroku's container registry
-          # docker push registry.heroku.com/flight-plan-server/web
+          docker push registry.heroku.com/flight-plan-server/web
           
           # Let Heroku build image from Dockerfile and push to Container Registry
-          heroku container:push web
+          # heroku container:push web
           
           # Release the image on Heroku
           heroku container:release web --app flight-plan-server
