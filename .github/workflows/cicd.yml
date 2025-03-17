@@ -35,7 +35,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Deploy to Heroku
-        uses: behe/heroku-build@v1
+        uses: CDNievas/heroku-action@v1.0
         with:
-          app-name: "flight-plan-server"
-          api-key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_email: ${{ vars.HEROKU_EMAIL }}
+          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+          heroku_app_name: "flight-plan-server"
