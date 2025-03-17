@@ -45,17 +45,6 @@ public class FlightPlanServiceImpl implements FlightPlanService {
     }
 
     @Override
-    public ResponseEntity<String> testEndpoint() {
-//        return restTemplate.getForEntity(flightManagerUrl + flightManagerPathDisplayAll, String.class);
-        return flightManagerWebClient.get()
-                .uri(flightManagerPathDisplayAll)
-                .retrieve()
-                .toEntity(String.class)
-                .timeout(Duration.ofMillis(10000))
-                .block();
-    }
-
-    @Override
     public List<FlightPlanDto> displayAllFlightPlans() {
         return flightManagerWebClient.get()
                 .uri(flightManagerPathDisplayAll)
