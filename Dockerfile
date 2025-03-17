@@ -1,8 +1,8 @@
 FROM maven:3.9.9-eclipse-temurin-17
 COPY pom.xml .
 COPY src ./src
-RUN --mount=type=secret,id=APIKEY_KEY
-RUN --mount=type=secret,id=APIKEY_VALUE
+RUN --mount=type=secret,id=apikey_key,env=APIKEY_KEY
+RUN --mount=type=secret,id=apikey_value,env=APIKEY_VALUE
 RUN mvn clean install -DskipTests
 EXPOSE 8080
 CMD ["java", "-jar", "target/flight-plan-server-0.0.1-SNAPSHOT.jar"]

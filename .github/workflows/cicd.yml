@@ -30,8 +30,8 @@ jobs:
           push: true
           tags: dexsjw/flight-plan-server:latest
           secrets: |
-            "APIKEY_KEY=${{ secrets.APIKEY_KEY }}"
-            "APIKEY_VALUE=${{ secrets.APIKEY_VALUE }}"
+            "apikey_key=${{ secrets.APIKEY_KEY }}"
+            "apikey_value=${{ secrets.APIKEY_VALUE }}"
 
   heroku-deploy:
     needs: docker-build-push
