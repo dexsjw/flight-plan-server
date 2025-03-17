@@ -31,6 +31,9 @@ public class FlightPlanServiceImpl implements FlightPlanService {
     @Value("${external.flight.data.path.aeronautical-data.search}")
     private String aeronauticalDataSearchPath;
 
+    @Value("${external.flight.data.path.aeronautical-data.exist}")
+    private String aeronauticalDataExistPath;
+
     private WebClient flightManagerWebClient;
     private WebClient aeronauticalDataWebClient;
     private ObjectMapper objectMapper;
@@ -112,7 +115,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
 
     private boolean isAeronauticalDataTypeAndTermExist(AeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
         return Boolean.parseBoolean(aeronauticalDataWebClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/exist/{type}/{term}")
+                .uri(uriBuilder -> uriBuilder.path(aeronauticalDataExistPath + "/{type}/{term}")
                         .build(aeronauticalDataType.getType(), aeronauticalDataTerm))
                 .accept(MediaType.TEXT_PLAIN)
                 .retrieve()
