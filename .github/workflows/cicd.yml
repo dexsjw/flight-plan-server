@@ -33,10 +33,31 @@ jobs:
   heroku-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Deploy to Heroku
-        uses: CDNievas/heroku-action@v1.0
-        with:
-          heroku_email: ${{ vars.HEROKU_EMAIL }}
-          heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
-          heroku_app_name: "flight-plan-server"
+      - name: Checkout to github runner
+        uses: actions/checkout@v4
+
+      - name: Install Heroku CLI
+        run: curl https://cli-assets.heroku.com/install.sh | sh
+
+      # Log in to Heroku using the HEROKU_API_KEY environment variable
+#      - name: Login to Heroku
+#        run: heroku auth:token
+#        env:
+#          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+
+      - name: Deploy Docker image to Heroku
+        run: |
+          # Refer to https://devcenter.heroku.com/articles/container-registry-and-runtime#building-and-pushing-image-s
+          # for more information
+          
+          # Log in to Heroku container registry
+          docker login --username=${{ vars.DOCKERHUB_USERNAME }} --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
+          
+          # Tag the Docker image
+          docker tag dexsjw/flight-plan-server:latest registry.heroku.com/flight-plan-server/web
+          
+          # Push to Heroku's container registry
+          docker push registry.heroku.com/flight-plan-server/web
+          
+          # Release the image on Heroku
+          heroku container:release web --app flight-plan-server
