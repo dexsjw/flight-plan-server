@@ -53,11 +53,17 @@ jobs:
           # Log in to Heroku container registry
           docker login --username=${{ vars.DOCKERHUB_USERNAME }} --password=${{ secrets.HEROKU_API_KEY }} registry.heroku.com
           
+          # Pull image from Docker Hub
+          docker pull dexsjw/flight-plan-server:latest
+          
           # Tag the Docker image
           docker tag dexsjw/flight-plan-server:latest registry.heroku.com/flight-plan-server/web
           
           # Push to Heroku's container registry
           docker push registry.heroku.com/flight-plan-server/web
+          
+          # Let Heroku build image from Dockerfile and push to Container Registry
+          # heroku container:push web
           
           # Release the image on Heroku
           heroku container:release web --app flight-plan-server
