@@ -21,11 +21,6 @@ public class FlightPlanController {
         this.flightPlanService = flightPlanService;
     }
 
-    @GetMapping("/test")
-    public ResponseEntity<String> testEndpoint() {
-        return flightPlanService.testEndpoint();
-    }
-
     @GetMapping("/displayAll")
     public ResponseEntity<List<FlightPlanDto>> displayAllFlightPlans() {
         return ResponseEntity.status(HttpStatus.OK).body(flightPlanService.displayAllFlightPlans());

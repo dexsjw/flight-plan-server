@@ -25,13 +25,14 @@ import java.util.Optional;
 @Service
 public class FlightPlanServiceImpl implements FlightPlanService {
 
-//    @Value("${external.flight.data.url.flight-manager}")
-////    private String flightManagerUrl;
-
     @Value("${external.flight.data.path.flight-manager.display-all}")
-    private String flightManagerPathDisplayAll;
+    private String flightManagerDisplayAllPath;
 
-//    private RestTemplate restTemplate;
+    @Value("${external.flight.data.path.aeronautical-data.search}")
+    private String aeronauticalDataSearchPath;
+
+    @Value("${external.flight.data.path.aeronautical-data.exist}")
+    private String aeronauticalDataExistPath;
 
     private WebClient flightManagerWebClient;
     private WebClient aeronauticalDataWebClient;
@@ -41,24 +42,12 @@ public class FlightPlanServiceImpl implements FlightPlanService {
         this.flightManagerWebClient = flightManagerWebClient;
         this.aeronauticalDataWebClient = aeronauticalDataWebClient;
         this.objectMapper = objectMapper;
-//        this.restTemplate = restTemplate;
-    }
-
-    @Override
-    public ResponseEntity<String> testEndpoint() {
-//        return restTemplate.getForEntity(flightManagerUrl + flightManagerPathDisplayAll, String.class);
-        return flightManagerWebClient.get()
-                .uri(flightManagerPathDisplayAll)
-                .retrieve()
-                .toEntity(String.class)
-                .timeout(Duration.ofMillis(10000))
-                .block();
     }
 
     @Override
     public List<FlightPlanDto> displayAllFlightPlans() {
         return flightManagerWebClient.get()
-                .uri(flightManagerPathDisplayAll)
+                .uri(flightManagerDisplayAllPath)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<FlightPlanDto>>() {})
                 .timeout(Duration.ofMillis(10000))
@@ -70,7 +59,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
     public FlightPlanRouteDataDto searchFlightPlanRouteData(String id) {
         log.info("FlightPlanId: " + id);
         List<FlightPlanRouteDataDto> flightPlanRouteDataList = flightManagerWebClient.get()
-                .uri(flightManagerPathDisplayAll)
+                .uri(flightManagerDisplayAllPath)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<FlightPlanRouteDataDto>>() {})
                 .timeout(Duration.ofMillis(10000))
@@ -126,7 +115,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
 
     private boolean isAeronauticalDataTypeAndTermExist(AeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
         return Boolean.parseBoolean(aeronauticalDataWebClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/exist/{type}/{term}")
+                .uri(uriBuilder -> uriBuilder.path(aeronauticalDataExistPath + "/{type}/{term}")
                         .build(aeronauticalDataType.getType(), aeronauticalDataTerm))
                 .accept(MediaType.TEXT_PLAIN)
                 .retrieve()
@@ -138,7 +127,7 @@ public class FlightPlanServiceImpl implements FlightPlanService {
 
     private List<String> searchAeronauticalDataTypeAndTerm(AeronauticalDataType aeronauticalDataType, String aeronauticalDataTerm) {
         String dataJsonStr = aeronauticalDataWebClient.get()
-                .uri(uriBuilder -> uriBuilder.path("/search/{type}/{term}")
+                .uri(uriBuilder -> uriBuilder.path(aeronauticalDataSearchPath + "/{type}/{term}")
                         .build(aeronauticalDataType.getType(), aeronauticalDataTerm))
                 .accept(MediaType.TEXT_PLAIN)
                 .retrieve()
