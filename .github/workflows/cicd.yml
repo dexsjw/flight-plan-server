@@ -49,6 +49,7 @@ jobs:
           heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
           heroku_app_name: "flight-plan-server"
           heroku_email: ${{ vars.HEROKU_EMAIL }}
+        env:
           # For using Heroku's Config Vars
           HD_APIKEY_KEY: ${{ secrets.APIKEY_KEY }}
           HD_APIKEY_VALUE: ${{ secrets.APIKEY_VALUE }}
